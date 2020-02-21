@@ -1,0 +1,76 @@
+package com.csye6225.spring2020.courseservice.Model;
+
+import java.util.List;
+
+public class Program {
+	
+	private String programName;
+	private long programId;
+	private List<Course> courses;
+	private List<Professor> professors;
+	private int progDuration;
+	private int graduationCredits;
+
+	public Program() {
+
+	}
+
+	public Program(String programName, long programId, List<Course> courses, List<Professor> professors,
+			int progDuration, int graduationCredits) {
+		this.programName = programName;
+		this.programId = programId;
+		this.courses = courses;
+		this.professors = professors;
+		this.progDuration = progDuration;
+		this.graduationCredits = graduationCredits;
+	}
+
+	public String getProgramName() {
+		return programName;
+	}
+
+	public void setProgramName(String programName) {
+		this.programName = programName;
+	}
+
+	public long getProgramId() {
+		return programId;
+	}
+
+	public void setProgramId(long programId) {
+		this.programId = programId;
+	}
+
+	public List<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
+	}
+
+	public List<Professor> getProfessors() {
+		return professors;
+	}
+
+	public void setProfessors(List<Professor> professors) {
+		this.professors = professors;
+	}
+
+	public int getProgDuration() {
+		return progDuration;
+	}
+
+	public void setProgDuration(int progDuration) {
+		this.progDuration = progDuration;
+	}
+
+	public int getGraduationCredits() {
+		return graduationCredits;
+	}
+
+	public void setGraduationCredits(int graduationCredits) {
+		this.graduationCredits = graduationCredits;
+	}
+
+}

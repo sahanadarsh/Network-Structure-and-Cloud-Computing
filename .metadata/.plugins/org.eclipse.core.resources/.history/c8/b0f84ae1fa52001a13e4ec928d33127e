@@ -1,0 +1,132 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+//import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+//import com.csye6225.fall2018.courseservice.datamodel.DynamoDbConnector;
+//import com.csye6225.fall2018.courseservice.datamodel.InMemoryDatabase;
+//import com.csye6225.fall2018.courseservice.datamodel.Professor;
+
+public class ProfessorService{
+
+	static HashMap<String, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
+	static HashMap<String, Course> course_Map = InMemoryDatabase.getCourseDB();
+
+	public ProfessorService(){
+	}
+
+	// Getting a list of all professor 
+	public List<Professor> getAllProfessors(){	
+		ArrayList<Professor> list = new ArrayList<>();
+		for (Professor prof : prof_Map.values()) {
+			list.add(prof);
+		}
+		return list ;
+	}
+
+	// Adding a professor
+	public void addProfessor(Professor professor){
+		boolean found = false;
+		for (Professor prof : prof_Map.values()) {
+			if((prof.getProfessorId()).equalsIgnoreCase(professor.getProfessorId())) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Professor prof = new Professor(professor.getProfessorId(), professor.getFirstName() , professor.getLastName(), 
+					professor.getDepartment(), professor.getJoiningDate(), professor.getCourses());
+			prof_Map.put(professor.getProfessorId(), prof);
+		}else {
+			System.out.println("Professor already exits");
+		}
+	}
+
+	// Getting One Professor
+	public Professor getProfessor(String profId) {
+		if(!prof_Map.containsKey(profId)) {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}else {
+			Professor prof2 = prof_Map.get(profId);
+			System.out.println("Item retrieved: ");
+			System.out.println(prof2.toString());
+			return prof2;
+		}
+	}
+
+	// Deleting a professor
+	public Professor deleteProfessor(String profId) {
+		if(prof_Map.containsKey(profId)) {
+			return prof_Map.remove(profId);
+		}else {
+			throw new NoSuchElementException ("Professor doesn't exits to delete");
+		}
+
+	}
+
+	// Updating Professor Info
+	public Professor updateProfessorInformation(String profId, Professor prof) {	
+		if(!prof_Map.containsKey(profId)) {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}else {
+			prof.setProfessorId(prof.getFirstName()+ prof.getLastName());
+			prof_Map.put(profId, prof);
+			return prof;
+		}
+	}
+
+	// Get professors in a department 
+	public List<Professor> getProfessorsByDepartment(String department) {	
+		if(prof_Map.containsKey(department)) {
+			ArrayList<Professor> list = new ArrayList<>();
+			for (Professor prof : prof_Map.values()) {
+				if (prof.getDepartment().equalsIgnoreCase(department)) {
+					list.add(prof);
+				}
+			}
+			return list ;
+		} else {
+			throw new NoSuchElementException ("Professor with the mentioned department doesn't exits");
+		}
+	}
+
+	// Get professors for a year with a size limit
+	public List<Professor> getProfessorsByJoiningDate(String joingingDate) {	
+		if(prof_Map.containsKey(joingingDate)) {
+			ArrayList<Professor> list = new ArrayList<>();
+			for (Professor prof : prof_Map.values()) {
+				if (prof.getDepartment().equalsIgnoreCase(joingingDate)) {
+					list.add(prof);
+				}
+			}
+			return list ;
+		} else {
+			throw new NoSuchElementException ("Professor with the mentioned joining date doesn't exits");
+		}
+	}
+	
+	//Get courses associated with a particular professor
+	public List<Course> getCoursesByProfessor(String profId) {
+		if(prof_Map.containsKey(profId)){
+			for (Professor prof : prof_Map.values()) {
+				if (prof.getProfessorId().equalsIgnoreCase(profId)) {
+					List<String> courses = prof.getCourses();
+					return (List<Course>) course_Map.get(courses);
+				}
+			}
+		}else {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}
+		return null;
+	}
+
+}

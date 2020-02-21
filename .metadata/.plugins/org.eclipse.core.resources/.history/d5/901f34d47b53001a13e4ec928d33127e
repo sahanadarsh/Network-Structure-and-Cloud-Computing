@@ -1,0 +1,138 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Lecture;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class CourseService {
+
+	static HashMap<String, Course> course_Map = InMemoryDatabase.getCourseDB();
+	static HashMap<String, Student> student_Map = InMemoryDatabase.getStudentDB();
+	static HashMap<String, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
+	static HashMap<String, Lecture> lecture_Map = InMemoryDatabase.getLectureDB();
+
+	public CourseService() {
+	}
+
+	//get all courses
+	public List<Course> getAllCourses() {
+		ArrayList<Course> list = new ArrayList<>();
+		for (Course course : course_Map.values()) {
+			list.add(course);
+		}
+		return list ;
+	}
+
+	// Adding a course
+	public void addCourse(String courseName, List<String> lectures, String board, String roster, List<String> enrolledStudents,
+			String professorName, String studentTA, int credit) {
+		boolean found = false;
+		//Create a course Object
+		for (Course course : course_Map.values()) {
+			if(course.getCourseName() == courseName) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Course course = new Course( courseName, lectures, board, roster, enrolledStudents, professorName, studentTA, credit);
+			course_Map.put(courseName, course);
+		}else {
+			System.out.println("Course already exits");
+		}
+	}
+
+
+	// Getting One course
+	public Course getCourse(String courseName) {
+		if(course_Map.containsKey(courseName)) {
+			Course course = course_Map.get(courseName);
+			System.out.println("Item retrieved:");
+			System.out.println(course.toString());
+			return course;
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+	}
+
+	// Deleting a course
+	public Course deleteCourse(String courseName) {
+		if(course_Map.containsKey(courseName)) {
+			return course_Map.remove(courseName);
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+	}
+
+	// Updating course Info
+	public Course updateCourseInformattion(String courseName, Course course) {
+		course.setCourseName(course.getCourseName());
+		course_Map.put(courseName, course);
+		return course;
+	}
+
+	// Get studentTA by a course 
+	public Student getStudentTAByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				String studentName = course.getStudentTA();
+				return student_Map.get(studentName);
+			}
+		}
+		return null;
+	}
+
+	// Get professor by a course 
+	public String getProfessorByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getProfessorName();
+			}
+		}
+		return null;
+	}
+
+	// Get enrolled students by a course
+	public List<String> getEnrolledStudentsByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getEnrolledStudents();
+			}
+		}
+		return null;
+	}
+
+	// Get credits by a course
+	public int getCreditsByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getCredits();
+			}
+		}
+		return 0;
+	}
+
+
+	// Get lectures by a course
+	public List<String> getLecturesByCourse(String courseName) {	
+		//Getting the lectures list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getLectures();
+			}
+		}
+		return null;
+	}
+
+}
+

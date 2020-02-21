@@ -1,0 +1,87 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Program;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class ProgramService {
+
+	static HashMap<String, Program> program_Map = InMemoryDatabase.getProgramDB();
+
+	public ProgramService() {
+	}
+
+	public List<Program> getAllPrograms() {
+		ArrayList<Program> list = new ArrayList<>();
+		for (Program program : program_Map.values()) {
+			list.add(program);
+		}
+		return list ;
+	}
+
+	// Adding a program
+	public void addProgram(String programName, List<Course> courses, List<Professor> professors, int progDuration, int graduationCredits) {
+		boolean found = false;
+		//Create a student Object
+		for (Program prog : program_Map.values()) {
+			if(prog.getProgramName() == programName) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Program prog = new Program( programName, courses, professors, progDuration, graduationCredits);
+			program_Map.put(programName, prog);
+		}else {
+			System.out.println("Program already exits");
+		}
+	}
+
+
+	// Getting One program
+	public Program getProgram(String programName) {
+
+		//Simple HashKey Load
+		Program program = program_Map.get(programName);
+		System.out.println("Item retrieved:");
+		System.out.println(program.toString());
+
+		return program;
+	}
+
+	// Deleting a student
+	public Student deleteStudent(Long studentId) {
+		return student_Map.remove(studentId);
+	}
+
+	// Updating student Info
+	public Student updateStudentInformation(String studentId, Student student) {
+		student.setStudentId(student.getFirstName() + student.getLastName());
+		student_Map.put(Long.valueOf(studentId), student);
+		return student;
+	}
+
+	// Get students in a program 
+	public List<Student> getStudentsByProgram(String program) {	
+		//Getting the list
+		ArrayList<Student> list = new ArrayList<>();
+		for (Student prof : student_Map.values()) {
+			if (prof.getProgram().equalsIgnoreCase(program)) {
+				list.add(prof);
+			}
+		}
+		return list ;
+	}
+
+	// Get professors for a year with a size limit
+
+}
+
+
+
+

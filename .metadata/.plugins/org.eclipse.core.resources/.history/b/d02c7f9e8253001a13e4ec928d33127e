@@ -1,0 +1,107 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Lecture;
+
+public class LectureService {
+
+	static HashMap<String, Lecture> lecture_Map = InMemoryDatabase.getLectureDB();
+
+	public LectureService() {
+	}
+
+	public List<Lecture> getAllLectures() {
+		ArrayList<Lecture> list = new ArrayList<>();
+		for (Lecture lecture : lecture_Map.values()) {
+			list.add(lecture);
+		}
+		return list ;
+	}
+
+	// Adding a course
+	public void addLecture(Lecture lecture) {
+		boolean found = false;
+		//Create a course Object
+		for (Lecture lect : lecture_Map.values()) {
+			if((lect.getLectureName()).equalsIgnoreCase(lecture.getLectureName())){
+				found = true;
+			}
+		}
+		if (!found) {
+			Lecture lect = new Lecture(lecture.getLectureName(), lecture.getNotes(), lecture.getAssociatedMaterials(), lecture.getNotifications(), lecture.getDuration());
+			lecture_Map.put(lecture.getLectureName(), lect);
+		}else {
+			System.out.println("Lecture already exits");
+		}
+	}
+
+	// Getting One lecture
+	public Lecture getLecture(String lectureName) {
+
+		//Simple HashKey Load
+		Lecture lecture = lecture_Map.get(lectureName);
+		System.out.println("Item retrieved:");
+		System.out.println(lecture.toString());
+
+		return lecture;
+	}
+
+	// Deleting a lecture
+	public Lecture deleteLecture(String lectureName) {
+		return lecture_Map.remove(lectureName);
+	}
+
+	// Updating lecture Info
+	public Lecture updateLectureInformattion(String lectureName, Lecture lecture) {
+		lecture.setLectureName(lecture.getLectureName());
+		lecture_Map.put(lectureName, lecture);
+		return lecture;
+	}
+	
+	// Get notes by a lecture 
+	public List<String> getNotesByLecture(String lectureName) {	
+		for (Lecture lecture : lecture_Map.values()) {
+			if (lecture.getLectureName().equalsIgnoreCase(lectureName)) {
+				return lecture.getNotes();
+			}
+		}
+		return null;
+	}
+	
+	// Get associated material by a lecture
+	public List<String> getAssociatedMaterialsByLecture(String lectureName) {	
+		for (Lecture lecture : lecture_Map.values()) {
+			if (lecture.getLectureName().equalsIgnoreCase(lectureName)) {
+				return lecture.getAssociatedMaterials();
+			}
+		}
+		return null;
+	}
+	
+	// Get duration by a lecture
+	public String getDurationByLecture(String lectureName) {	
+		for (Lecture lecture : lecture_Map.values()) {
+			if (lecture.getLectureName().equalsIgnoreCase(lectureName)) {
+				return lecture.getDuration();
+			}
+		}
+		return null;
+	}
+	
+	
+	// Get notifications by a lecture
+	public List<String> getNotificationsByLecture(String lectureName) {	
+		for (Lecture lecture : lecture_Map.values()) {
+			if (lecture.getLectureName().equalsIgnoreCase(lectureName)) {
+				return lecture.getNotifications();
+			}
+		}
+		return null;
+	}
+
+}
+

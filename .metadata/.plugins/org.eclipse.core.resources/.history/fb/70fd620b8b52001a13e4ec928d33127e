@@ -1,0 +1,30 @@
+package com.csye6225.spring2020.courseservice.Model;
+
+import java.util.List;
+
+public class Lecture {
+	
+	private String lectureName;
+	private List<String> notes;
+	private List<String> associatedMaterials;
+	private List<String> notifications;
+	private int duration;
+
+	public Lecture() {
+
+	}
+
+	public Lecture(String lectureName, List<String> notes, List<String> associatedMaterials, List<String> notifications,
+			int duration) {
+		this.lectureName = lectureName;
+		this.notes = notes;
+		this.associatedMaterials = associatedMaterials;
+		this.notifications = notifications;
+		this.duration = duration;
+	}
+	
+	
+	
+ 
+
+}

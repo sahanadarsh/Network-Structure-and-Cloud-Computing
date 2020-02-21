@@ -1,0 +1,95 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.csye6225.spring2020.courseservice.DataBase.StudentDB;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class StudentService {
+
+	static HashMap<Long, Student> student_Map = StudentDB.getstudentDB();
+
+	public StudentService() {
+	}
+
+	public List<Student> getAllStudents() {
+		ArrayList<Student> list = new ArrayList<>();
+		for (Student student : student_Map.values()) {
+			list.add(student);
+		}
+		return list ;
+	}
+
+	// Adding a student
+	public void addStudent(String firstName, String lastName, String program, List<String> enrolledCourses) {
+		// Next Id 
+		long nextAvailableId = student_Map.size() + 1;
+		boolean found = false;
+		//Create a student Object
+		for (Student stud : student_Map.values()) {
+			if((stud.getStudentId()).equalsIgnoreCase(firstName+lastName)) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Student stud = new Student(firstName+lastName, firstName , lastName, 
+					program, enrolledCourses);
+			student_Map.put(nextAvailableId, stud);
+		}else {
+			System.out.println("Student already exits");
+		}
+	}
+
+
+	// Getting One student
+	public Student getStudent(String studentId) {
+
+		//Simple HashKey Load
+		Student student = student_Map.get(Long.parseLong(studentId));
+		System.out.println("Item retrieved:");
+		System.out.println(student.toString());
+
+		return student;
+	}
+
+	// Deleting a student
+	public Student deleteStudent(Long studentId) {
+//		Student deletedProfDetails = student_Map.get(studentId);
+//		student_Map.remove(studentId);
+//		return deletedProfDetails;
+		return student_Map.remove(studentId);
+	}
+
+	// Updating student Info
+	public Student updateStudentInformation(String studentId, Student student) {
+		student.setStudentId(student_Map.get(Long.parseLong(studentId)).getStudentId());
+		student_Map.put(Long.valueOf(studentId), student);
+		return student;
+//		Student oldProfObject = student_Map.get(Long.parseLong(studentId));
+//		oldProfObject.setFirstName(student.getFirstName());
+//		oldProfObject.setLastName(student.getLastName());
+//		oldProfObject.setProgram(student.getProgram());
+//		oldProfObject.setEnrolledCourses(student.getEnrolledCourses());
+//		return oldProfObject;
+	}
+
+	// Get students in a program 
+	public List<Student> getStudentsByProgram(String program) {	
+		//Getting the list
+		ArrayList<Student> list = new ArrayList<>();
+		for (Student prof : student_Map.values()) {
+			if (prof.getProgram().equalsIgnoreCase(program)) {
+				list.add(prof);
+			}
+		}
+		return list ;
+	}
+
+	// Get professors for a year with a size limit
+
+}
+
+
+

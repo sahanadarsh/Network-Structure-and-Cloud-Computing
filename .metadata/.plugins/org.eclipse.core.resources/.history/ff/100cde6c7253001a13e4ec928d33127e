@@ -1,0 +1,118 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Program;
+
+public class ProgramService {
+
+	static HashMap<String, Program> program_Map = InMemoryDatabase.getProgramDB();
+
+	public ProgramService() {
+	}
+
+	//get all programs
+	public List<Program> getAllPrograms() {
+		ArrayList<Program> list = new ArrayList<>();
+		for (Program program : program_Map.values()) {
+			list.add(program);
+		}
+		return list ;
+	}
+
+	// Adding a program
+	public void addProgram(String programName, List<String> courses, List<String> professors, String progDuration, int graduationCredits) {
+		boolean found = false;
+		for (Program prog : program_Map.values()) {
+			if(prog.getProgramName() == programName) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Program prog = new Program( programName, courses, professors, progDuration, graduationCredits);
+			program_Map.put(programName, prog);
+		}else {
+			System.out.println("Program already exits");
+		}
+	}
+
+
+	// Getting One program
+	public Program getProgram(String programName) {
+		if(program_Map.containsKey(programName)) {
+
+			Program program = program_Map.get(programName);
+			System.out.println("Item retrieved:");
+			System.out.println(program.toString());
+
+			return program;
+		}else {
+			throw new NoSuchElementException("Prrograms doesn't exit");
+		}
+	}
+
+	// Deleting a program
+	public Program deleteProgram(String programName) {
+		return program_Map.remove(programName);
+	}
+
+	// Updating student Info
+	public Program updateProgramInformattion(String programName, Program program) {
+		program.setProgramName(program.getProgramName());
+		program_Map.put(programName, program);
+		return program;
+	}
+
+	// Get courses in a program 
+	public List<String> getCoursesByProgram(String programName) {	
+		//Getting the courses list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getCourses();
+			}
+		}
+		return null;
+	}
+
+	// Get professors in a program 
+	public List<String> getProfessorsByProgram(String programName) {	
+		//Getting the professors list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getProfessors();
+			}
+		}
+		return null;
+	}
+
+	//Get graduation credits by a program
+	public int getCreditsByProgram(String programName) {	
+		//Getting the professors list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getGraduationCredits();
+			}
+		}
+		return 0;
+	}
+
+	//Get duration by a program 
+	public String getDurationByProgram(String programName) {	
+		//Getting the professors list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getProgDuration();
+			}
+		}
+		return null;
+	}
+
+}
+
+
+
+

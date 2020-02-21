@@ -1,0 +1,166 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Lecture;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+import com.csye6225.spring2020.courseservice.datamodel.Student;
+
+public class CourseService {
+
+	static HashMap<String, Course> course_Map = InMemoryDatabase.getCourseDB();
+	StudentService studentService;
+	ProfessorService professorService;
+	LectureService lectureService;
+
+	public CourseService() {
+	}
+
+	//get all courses
+	public List<Course> getAllCourses() {
+		ArrayList<Course> list = new ArrayList<>();
+		for (Course course : course_Map.values()) {
+			list.add(course);
+		}
+		return list ;
+	}
+
+	// Adding a course
+	public void addCourse(String courseName, List<String> lectures, String board, String roster, List<String> enrolledStudents,
+			String professorName, String studentTA, int credit) {
+		boolean found = false;
+		//Create a course Object
+		for (Course course : course_Map.values()) {
+			if(course.getCourseName() == courseName) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Course course = new Course( courseName, lectures, board, roster, enrolledStudents, professorName, studentTA, credit);
+			course_Map.put(courseName, course);
+		}else {
+			System.out.println("Course already exits");
+		}
+	}
+
+
+	// Getting One course
+	public Course getCourse(String courseName) {
+		System.out.println(courseName);
+		if(course_Map.containsKey(courseName)) {
+			Course course = course_Map.get(courseName);
+			System.out.println("Item retrieved:");
+			//System.out.println(course.toString());
+			return course;
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+	}
+
+	// Deleting a course
+	public Course deleteCourse(String courseName) {
+		if(course_Map.containsKey(courseName)) {
+			return course_Map.remove(courseName);
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+	}
+
+	// Updating course Info
+	public Course updateCourseInformattion(String courseName, Course course) {
+		if(course_Map.containsKey(courseName)) {
+			course.setCourseName(course.getCourseName());
+			course_Map.put(courseName, course);
+			return course;
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+	}
+
+	// Get studentTA by a course 
+	public Student getStudentTAByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				String studentName = course.getStudentTA();
+				return studentService.getStudent(studentName);
+			}
+		}
+		return null;
+	}
+
+	// Get professor by a course 
+	public Professor getProfessorByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				String professor = course.getProfessorName();
+				return professorService.getProfessor(professor);
+			}
+		}
+		return null;
+	}
+
+	// Get enrolled students by a course
+	public List<Student> getEnrolledStudentsByCourse(String courseName) {	
+		if(course_Map.containsKey(courseName)){
+			for (Course course : course_Map.values()) {
+				if (course.getCourseName().equalsIgnoreCase(courseName)) {
+					List<String> students = course.getEnrolledStudents();
+					List<Student> student = new ArrayList<>();
+					for(int i = 0; i < students.size(); i++) {
+						student.add(studentService.getStudent(students.get(i)));
+					}
+					return student;
+				}
+			}
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+		return null;
+	}
+
+	// Get lectures by a course
+	public List<Lecture> getLecturesByCourse(String courseName) {	
+		if(course_Map.containsKey(courseName)){
+			for (Course course : course_Map.values()) {
+				if (course.getCourseName().equalsIgnoreCase(courseName)) {
+					List<String> lectures = course.getLectures();
+					List<Lecture> lecture = new ArrayList<>();
+					for(int i = 0; i < lectures.size(); i++) {
+						lecture.add(lectureService.getLecture(lectures.get(i)));
+					}
+					return lecture;
+				}
+			}
+		}else {
+			throw new NoSuchElementException ("Course doesn't exits");
+		}
+
+		return null;
+	}
+
+	// Get credits by a course
+	public int getCreditsByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getCredits();
+			}
+		}
+		throw new NoSuchElementException ("Course doesn't exits");
+	}
+
+	public static boolean doesCourseExit(List<String> courseName){
+		for(int i = 0; i < courseName.size(); i++) {
+			if(!course_Map.containsKey(courseName.get(i))){
+				return false;
+			}
+		}
+		return true;
+	}
+
+}
+

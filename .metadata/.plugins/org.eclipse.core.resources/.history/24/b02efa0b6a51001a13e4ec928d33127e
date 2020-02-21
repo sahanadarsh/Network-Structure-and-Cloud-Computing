@@ -1,0 +1,15 @@
+package com.csye6225.spring2020.courseservice.DataBase;
+
+import java.util.HashMap;
+
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class StudentDB {
+	
+	private static HashMap<Long, Student> studentDB = new HashMap<> ();
+
+	public static HashMap<Long, Student> getstudentDB() {
+		return studentDB;
+	}
+
+}

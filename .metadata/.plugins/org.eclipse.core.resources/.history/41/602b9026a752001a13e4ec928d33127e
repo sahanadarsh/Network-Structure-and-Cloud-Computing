@@ -1,0 +1,40 @@
+package com.csye6225.spring2020.courseservice.DataBase;
+
+import java.util.HashMap;
+
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Lecture;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Program;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class InMemoryDatabase {
+
+	private static HashMap<Long, Professor> professorDB = new HashMap<> ();
+	private static HashMap<String, Student> studentDB = new HashMap<> ();
+	private static HashMap<String, Program> programDB = new HashMap<> ();
+	private static HashMap<String, Course> courseDB = new HashMap<> ();
+	private static HashMap<String, Lecture> lectureDB = new HashMap<> ();
+
+	public static HashMap<Long, Professor> getProfessorDB() {
+		return professorDB;
+	}
+	
+	public static HashMap<String, Student> getStudentDB() {
+		return studentDB;
+	}
+	
+	public static HashMap<String, Program> getProgramDB() {
+		return programDB;
+	}
+	
+	public static HashMap<String, Course> getCourseDB() {
+		return courseDB;
+	}
+	
+	public static HashMap<String, Lecture> getLectureDB() {
+		return lectureDB;
+	}
+
+}
+

@@ -1,0 +1,170 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Lecture;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+import com.csye6225.spring2020.courseservice.datamodel.Student;
+import com.csye6225.spring2020.courseservice.exception.DataNotFoundException;
+
+public class CourseService {
+
+	static HashMap<String, Course> course_Map = InMemoryDatabase.getCourseDB();
+
+	public CourseService() {
+	}
+
+	//get all courses
+	public List<Course> getAllCourses() {
+		ArrayList<Course> list = new ArrayList<>();
+		for (Course course : course_Map.values()) {
+			list.add(course);
+		}
+		if(list.isEmpty()) {
+			throw new DataNotFoundException("No courses in the system");
+		}else {
+			return list ;
+		}
+	}
+
+	// Adding a course
+	public Course addCourse(Course course) {
+		course.setCourseName(course.getCourseName());
+		boolean found = false;
+		for (Course crse : course_Map.values()) {
+			if(crse.getCourseName().equalsIgnoreCase(course.getCourseName())){
+				found = true;
+			}
+		}
+		if (!found) {
+			if(ProfessorService.doesProfessorExit(course.getProfessorName()) && LectureService.doesLecturesExit(course.getLectures()) && StudentService.doesStudentsExit(course.getEnrolledStudents()) && StudentService.doesStudentExit(course.getStudentTA())) {
+				Course crse = new Course(course.getCourseName(), course.getLectures(), course.getBoard(), course.getRoster(), course.getEnrolledStudents(), course.getProfessorName(), course.getStudentTA(), course.getCredits());
+				course_Map.put(course.getCourseName(), crse);
+				return course;
+			}else {
+				throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("lectures,students,studentTA or professor doesn't exit").build());
+			}
+		}else {
+			throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Course already exit").build());
+		}
+	}
+
+
+	// Getting One course
+	public static Course getCourse(String courseName) {
+		if(course_Map.containsKey(courseName)) {
+			Course course = course_Map.get(courseName);
+			return course;
+		}else {
+			throw new DataNotFoundException("Course with name " + courseName + " not found");
+		}
+	}
+
+	// Deleting a course
+	public Course deleteCourse(String courseName) {
+		if(course_Map.containsKey(courseName)) {
+			return course_Map.remove(courseName);
+		}else {
+			throw new DataNotFoundException("Course with name " + courseName + " not found");
+		}
+	}
+
+	// Updating course Info
+	public Course updateCourseInformattion(String courseName, Course course) {
+		if(course_Map.containsKey(courseName)) {
+			course.setCourseName(course.getCourseName());
+			course_Map.put(courseName, course);
+			return course;
+		}else {
+			throw new DataNotFoundException("Course with name " + courseName + " not found");
+		}
+	}
+
+	// Get studentTA by a course 
+	public Student getStudentTAByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				String studentName = course.getStudentTA();
+				return StudentService.getStudent(studentName);
+			}
+		}
+		throw new DataNotFoundException("Didn't find student TA for the course " + courseName);
+	}
+
+	// Get professor by a course 
+	public Professor getProfessorByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				String professor = course.getProfessorName();
+				return ProfessorService.getProfessor(professor);
+			}
+		}
+		throw new DataNotFoundException("Didn't find professor for the course " + courseName);
+	}
+
+	// Get enrolled students by a course
+	public List<Student> getEnrolledStudentsByCourse(String courseName) {	
+		if(course_Map.containsKey(courseName)){
+			for (Course course : course_Map.values()) {
+				if (course.getCourseName().equalsIgnoreCase(courseName)) {
+					List<String> students = course.getEnrolledStudents();
+					List<Student> student = new ArrayList<>();
+					for(int i = 0; i < students.size(); i++) {
+						student.add(StudentService.getStudent(students.get(i)));
+					}
+					return student;
+				}
+			}
+		}else {
+			throw new DataNotFoundException("Didn't find students for the course " + courseName);
+		}
+		return null;
+	}
+
+	// Get lectures by a course
+	public List<Lecture> getLecturesByCourse(String courseName) {	
+		if(course_Map.containsKey(courseName)){
+			for (Course course : course_Map.values()) {
+				if (course.getCourseName().equalsIgnoreCase(courseName)) {
+					List<String> lectures = course.getLectures();
+					List<Lecture> lecture = new ArrayList<>();
+					for(int i = 0; i < lectures.size(); i++) {
+						lecture.add(LectureService.getLecture(lectures.get(i)));
+					}
+					return lecture;
+				}
+			}
+		}else {
+			throw new DataNotFoundException("Didn't find lectures for the course " + courseName);
+		}
+
+		return null;
+	}
+
+	// Get credits by a course
+	public int getCreditsByCourse(String courseName) {	
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getCredits();
+			}
+		}
+		throw new DataNotFoundException("Didn't find credits for the course " + courseName);
+	}
+
+	public static boolean doesCourseExit(List<String> courseName){
+		for(int i = 0; i < courseName.size(); i++) {
+			if(!course_Map.containsKey(courseName.get(i))){
+				return false;
+			}
+		}
+		return true;
+	}
+
+}
+

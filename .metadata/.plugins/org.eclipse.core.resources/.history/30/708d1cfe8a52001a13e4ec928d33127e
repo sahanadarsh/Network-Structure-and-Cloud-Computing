@@ -1,0 +1,19 @@
+package com.csye6225.spring2020.courseservice.Model;
+
+import java.util.List;
+
+public class Lecture {
+	
+	private String lectureName;
+	private List<String> notes;
+	private List<String> associatedMaterials;
+	private List<String> notifications;
+	private int duration;
+
+	public Lecture() {
+
+	}
+	
+ 
+
+}

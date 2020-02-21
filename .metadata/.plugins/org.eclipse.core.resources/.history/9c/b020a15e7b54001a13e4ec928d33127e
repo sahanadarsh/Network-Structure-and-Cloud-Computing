@@ -1,0 +1,13 @@
+package com.csye6225.spring2020.courseservice.exception;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+
+public class DataNotFoundExceptionMapper implements ExceptionMapper<DataNotFoundException>{
+
+	@Override
+	public Response toResponse(DataNotFoundException exception) {
+		return response.status(Status.NOT_FOUND).build;
+	}
+
+}

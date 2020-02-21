@@ -1,0 +1,124 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Lecture;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class LectureService {
+
+	static HashMap<String, Lecture> lecture_Map = InMemoryDatabase.getLectureDB();
+
+	public LectureService() {
+	}
+
+	public List<Lecture> getAllLectures() {
+		ArrayList<Lecture> list = new ArrayList<>();
+		for (Lecture lecture : lecture_Map.values()) {
+			list.add(lecture);
+		}
+		return list ;
+	}
+
+	// Adding a course
+	public void addLecture(Lecture lecture) {
+		boolean found = false;
+		//Create a course Object
+		for (Lecture lect : lecture_Map.values()) {
+			if((lect.getLectureName()).equalsIgnoreCase(lecture.getLectureName())){
+				found = true;
+			}
+		}
+		if (!found) {
+			Lecture lect = new Lecture(lecture.getLectureName(), lecture.getNotes(), lecture.getAssociatedMaterials(), lecture.getNotifications(), lecture.getDuration());
+			lecture_Map.put(lecture.getLectureName(), lect);
+		}else {
+			System.out.println("Lecture already exits");
+		}
+	}
+
+	// Getting One course
+	public Lecture getLecture(String lectureName) {
+
+		//Simple HashKey Load
+		Lecture lecture = lecture_Map.get(lectureName);
+		System.out.println("Item retrieved:");
+		System.out.println(lecture.toString());
+
+		return lecture;
+	}
+
+	// Deleting a course
+	public Lecture deleteLecture(String lectureName) {
+		return lecture_Map.remove(lectureName);
+	}
+
+	// Updating course Info
+	public Course updateLectureInformattion(String courseName, Course course) {
+		course.setCourseName(course.getCourseName());
+		course_Map.put(courseName, course);
+		return course;
+	}
+
+	// Get studentTA by a course 
+	public String getStudentTAByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getStudentTA();
+			}
+		}
+		return null;
+	}
+	
+	// Get professor by a course 
+	public String getProfessorByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getProfessorName();
+			}
+		}
+		return null;
+	}
+	
+	// Get enrolled students by a course
+	public List<String> getEnrolledStudentsByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getEnrolledStudents();
+			}
+		}
+		return null;
+	}
+	
+	// Get credits by a course
+	public int getCreditsByCourse(String courseName) {	
+		//Getting the courses list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getCredits();
+			}
+		}
+		return 0;
+	}
+	
+	
+	// Get lectures by a course
+	public List<String> getLecturesByCourse(String courseName) {	
+		//Getting the lectures list
+		for (Course course : course_Map.values()) {
+			if (course.getCourseName().equalsIgnoreCase(courseName)) {
+				return course.getLectures();
+			}
+		}
+		return null;
+	}
+
+}
+

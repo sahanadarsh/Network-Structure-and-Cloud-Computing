@@ -1,0 +1,92 @@
+package com.csye6225.spring2020.courseservice.Resources;
+
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Program;
+import com.csye6225.spring2020.courseservice.Service.ProgramService;
+
+@Path("programs")
+public class ProgramResource {
+
+	ProgramService progService = new ProgramService();
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Program> getAllPrograms() {
+		return progService.getAllPrograms();
+	}	
+	
+	@GET
+	@Path("/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Program getProfessor(@PathParam("programName") String programName) {
+		System.out.println("Program Resource: Looking for: " + programName);
+		if (progService.getProgram(programName) == null) {
+			return null;
+		}
+		return progService.getProgram(programName);
+	}
+	
+	@GET
+	@Path("courses/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getCoursesByProgram(
+			@PathParam("programName") String programName) {		
+		if (programName == null) {
+			return null;
+		}
+		return progService.getCoursesByProgram(programName);
+	}
+	
+	@GET
+	@Path("professors/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getProfessorsByProgram(@PathParam("programName") String programName) {
+		System.out.println("Program Resource: Looking for: " + programName);
+		if (programName == null) {
+			return null;
+		}
+		return progService.getProfessorsByProgram(programName);
+	}
+	
+	@DELETE
+	@Path("/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Program deleteProgram(@PathParam("programName") String programName) {
+		return progService.deleteProgram(programName);
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void addProgram(Program prog) {
+		    prog.setProgramName(prog.getProgramName());
+			progService.addProgram(prog.getProgramName(), prog.getCourses(), prog.getProfessors(), prog.getProgDuration(), prog.getGraduationCredits());
+	}
+	
+	@PUT
+	@Path("/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Program updateProgram(@PathParam("programName") String programName, 
+			Program prog) {
+		if(programName == null) {
+			return null;
+		}
+		return progService.updateProgramInformattion(programName, prog);
+	}
+
+ }
+

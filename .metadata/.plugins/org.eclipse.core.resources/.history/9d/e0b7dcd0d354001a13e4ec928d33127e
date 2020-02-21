@@ -1,0 +1,65 @@
+package com.csye6225.spring2020.courseservice.datamodel;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+public class InMemoryDatabase {
+
+	private static HashMap<String, Professor> professorDB = new HashMap<> ();
+	private static HashMap<String, Student> studentDB = new HashMap<> ();
+	private static HashMap<String, Program> programDB = new HashMap<> ();
+	private static HashMap<String, Course> courseDB = new HashMap<> ();
+	private static HashMap<String, Lecture> lectureDB = new HashMap<> ();
+
+	public static HashMap<String, Professor> getProfessorDB() {
+		addDefaultProfessorEntry();
+		return professorDB;
+	}
+	
+	public static void addDefaultProfessorEntry() {
+		professorDB.put("SahanaAdarsh", new Professor("Sahana", "Adarsh", "SahanaAdarsh", "Computer Science", "2019", Arrays.asList("Network Structure", "Web Development")));
+		professorDB.put("AvinavJami", new Professor("Avinav", "Jami", "AvinavJami", "Information Science", "2019", Arrays.asList("Network Structure", "Web Development")));
+		
+	}
+	
+	public static HashMap<String, Student> getStudentDB() {
+		addDefaultStudentEntry();
+		return studentDB;
+	}
+	
+	public static void addDefaultStudentEntry() {
+		studentDB.put("SnehaSomanna", new Student("SnehaSomanna", "Sneha", "Somanna", "http://localhost:8080/courseservice/webapi/students/student1.png", "Information Systems", Arrays.asList("Network Structure", "Web Development")););
+	}
+	
+	public static HashMap<String, Program> getProgramDB() {
+		addDefaultProgramEntry();
+		return programDB;
+	}
+	
+	public static void addDefaultProgramEntry() {
+		Program prog = new Program("Information Systems", Arrays.asList("Network Structure", "Web Development"), Arrays.asList("SahanaAdarsh", "AvinavJami"), "2 years", 32);
+		programDB.put("Information Systems", prog);
+	}
+	
+	public static HashMap<String, Course> getCourseDB() {
+		addDefaultCourseEntry();
+		return courseDB;
+	}
+	
+	public static void addDefaultCourseEntry() {
+		Course course = new Course("Network Structure", Arrays.asList("Network basics lecture class", "Web basics lecture class"), "board", "roaster", Arrays.asList("SnehaSomanna", "HemanthAnanth"), "SahanaAdarsh", "SnehaSomanna", 4);
+		courseDB.put("Network Structure", course);
+	}
+	
+	public static HashMap<String, Lecture> getLectureDB() {
+		addDefaultLectureEntry();
+		return lectureDB;
+	}
+	
+	public static void addDefaultLectureEntry() {
+		Lecture lecture = new Lecture("Network basics lecture class", Arrays.asList("cloud basic notes", "why cloud notes"), Arrays.asList("http://localhost:8080/courseservice/webapi/students/CloudBasic.pdf","http://localhost:8080/courseservice/webapi/students/CloudBegineers.pdf"), Arrays.asList("Assignment Deadline sunday by 12pm", "class time extended from 6 to 7"), "3hours");
+		lectureDB.put("Network basics lecture class", lecture);
+	}
+
+}
+

@@ -1,0 +1,68 @@
+package com.csye6225.spring2020.courseservice.DataBase;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Lecture;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+import com.csye6225.spring2020.courseservice.Model.Program;
+import com.csye6225.spring2020.courseservice.Model.Student;
+
+public class InMemoryDatabase {
+
+	private static HashMap<String, Professor> professorDB = new HashMap<> ();
+	private static HashMap<String, Student> studentDB = new HashMap<> ();
+	private static HashMap<String, Program> programDB = new HashMap<> ();
+	private static HashMap<String, Course> courseDB = new HashMap<> ();
+	private static HashMap<String, Lecture> lectureDB = new HashMap<> ();
+
+	public static HashMap<String, Professor> getProfessorDB() {
+		addDefaultProfessorEntry();
+		return professorDB;
+	}
+	
+	public static void addDefaultProfessorEntry() {
+		Professor prof = new Professor("Sahana", "Adarsh", "SahanaAdarsh", "Computer Science", "2019", Arrays.asList("Java", "Phython"));
+		professorDB.put("SahanaAdarsh", prof);
+	}
+	
+	public static HashMap<String, Student> getStudentDB() {
+		addDefaultStudentEntry();
+		return studentDB;
+	}
+	
+	public static void addDefaultStudentEntry() {
+		Student stud = new Student("SnehaSomanna", "Sneha", "Somanna", "http://localhost:8080/courseservice/webapi/students/student1.png", "Computer Science", Arrays.asList("Java", "Phython"));
+		studentDB.put("SahanaAdarsh", stud);
+	}
+	
+	public static HashMap<String, Program> getProgramDB() {
+		return programDB;
+	}
+	
+	public static void addDefaultProgramEntry() {
+		Student stud = new Student("SnehaSomanna", "Sneha", "Somanna", "http://localhost:8080/courseservice/webapi/students/student1.png", "Computer Science", Arrays.asList("Java", "Phython"));
+		studentDB.put("SahanaAdarsh", stud);
+	}
+	
+	public static HashMap<String, Course> getCourseDB() {
+		return courseDB;
+	}
+	
+	public static void addDefaultCourseEntry() {
+		Student stud = new Student("SnehaSomanna", "Sneha", "Somanna", "http://localhost:8080/courseservice/webapi/students/student1.png", "Computer Science", Arrays.asList("Java", "Phython"));
+		studentDB.put("SahanaAdarsh", stud);
+	}
+	
+	public static HashMap<String, Lecture> getLectureDB() {
+		return lectureDB;
+	}
+	
+	public static void addDefaultLectureEntry() {
+		Student stud = new Student("SnehaSomanna", "Sneha", "Somanna", "http://localhost:8080/courseservice/webapi/students/student1.png", "Computer Science", Arrays.asList("Java", "Phython"));
+		studentDB.put("SahanaAdarsh", stud);
+	}
+
+}
+

@@ -1,0 +1,106 @@
+package com.csye6225.spring2020.courseservice.Resources;
+
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.csye6225.spring2020.courseservice.Model.Course;
+import com.csye6225.spring2020.courseservice.Model.Program;
+import com.csye6225.spring2020.courseservice.Service.CourseService;
+import com.csye6225.spring2020.courseservice.Service.ProgramService;
+
+@Path("courses")
+public class CourseResource {
+
+	CourseService courseService = new CourseService();
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Course> getAllCourses() {
+		return courseService.getAllCourses();
+	}	
+	
+	@GET
+	@Path("/{courseName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Course getCourse(@PathParam("courseName") String courseName) {
+		System.out.println("Course Resource: Looking for: " + courseName);
+		if (courseName == null) {
+			return null;
+		}
+		return courseService.getCourse(courseName);
+	}
+	
+	@GET
+	@Path("enrolledStudents/{courseName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getCoursesByProgram(
+			@PathParam("courseName") String courseName) {		
+		if (courseName == null) {
+			return null;
+		}
+		return courseService.getEnrolledStudentsByCourse(courseName);
+	}
+	
+	@GET
+	@Path("professors/{courseName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getCoursesByProgram(
+			@PathParam("courseName") String courseName) {		
+		if (courseName == null) {
+			return null;
+		}
+		return courseService.getEnrolledStudentsByCourse(courseName);
+	}
+	
+	@GET
+	@Path("professors/{programName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getProfessorsByProgram(@PathParam("programName") String programName) {
+		System.out.println("Program Resource: Looking for: " + programName);
+		if (programName == null) {
+			return null;
+		}
+		return courseService.getProfessorsByProgram(programName);
+	}
+	
+	//write 2 gets
+	
+	@DELETE
+	@Path("/{courseName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Course deleteCourse(@PathParam("courseName") String courseName) {
+		return courseService.deleteCourse(courseName);
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void addCourse(Course course) {
+		    course.setCourseName(course.getCourseName());
+		    courseService.addCourse(course.getCourseName(), course.getLectures(), course.getBoard(), course.getRoster(), course.getEnrolledStudents(), course.getProfessorName(), course.getStudentTA(), course.getCredits());
+	}
+	
+	@PUT
+	@Path("/{courseName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Course updateCourse(@PathParam("courseName") String courseName, 
+			Course course) {
+		if(courseName == null) {
+			return null;
+		}
+		return courseService.updateCourseInformattion(courseName, course);
+	}
+
+ }
+
+

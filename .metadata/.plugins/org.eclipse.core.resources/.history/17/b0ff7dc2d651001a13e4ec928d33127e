@@ -1,0 +1,57 @@
+package com.csye6225.spring2020.courseservice.Model;
+
+import java.util.List;
+
+public class Program {
+	
+	private String programName;
+	private String programId;
+	private List<Course> courses;
+	private List<Professor> professors;
+	private int duration;
+	private int graduateCredits;
+
+	public Program() {
+
+	}
+
+	public Program(String programName, String programId, List<Course> courses, List<Professor> professors) {
+		this.programName = programName;
+		this.programId = programId;
+		this.courses = courses;
+		this.professors = professors;
+	}
+
+	public String getProgramName() {
+		return programName;
+	}
+
+	public void setProgramName(String programName) {
+		this.programName = programName;
+	}
+
+	public String getProgramId() {
+		return programId;
+	}
+
+	public void setProgramId(String programId) {
+		this.programId = programId;
+	}
+
+	public List<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
+	}
+
+	public List<Professor> getProfessors() {
+		return professors;
+	}
+
+	public void setProfessors(List<Professor> professors) {
+		this.professors = professors;
+	}
+
+}

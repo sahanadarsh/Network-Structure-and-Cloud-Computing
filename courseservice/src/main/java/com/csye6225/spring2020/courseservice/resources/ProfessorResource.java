@@ -1,0 +1,84 @@
+package com.csye6225.spring2020.courseservice.resources;
+
+import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+import com.csye6225.spring2020.courseservice.service.ProfessorService;
+
+@Path("professors")
+public class ProfessorResource {
+
+	ProfessorService profService = new ProfessorService();
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Professor> getAllProfessors() {
+		return profService.getAllProfessors();
+	}	
+
+	@GET
+	@Path("department/{department}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Professor> getProfessorsByDeparment(
+			@PathParam("department") String department) {
+		return profService.getProfessorsByDepartment(department);
+
+	}
+
+	@GET
+	@Path("joiningDate/{joiningDate}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Professor> getProfessorsByJoingingDate(
+			@PathParam("joiningDate") String joiningDate) {
+		return profService.getProfessorsByJoiningDate(joiningDate);		
+	}
+
+	@GET
+	@Path("/{professorId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public static Professor getProfessor(@PathParam("professorId") String profId) {
+		return ProfessorService.getProfessor(profId);
+	}
+
+	@GET
+	@Path("{profId}/courses")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Course> getCoursesByProfessors(
+			@PathParam("profId") String profId) {
+		return profService.getCoursesByProfessor(profId);		
+	}
+
+	@DELETE
+	@Path("/{professorId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Professor deleteProfessor(@PathParam("professorId") String profId) {
+		return profService.deleteProfessor(profId);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Professor addProfessor(Professor prof) {
+		return profService.addProfessor(prof);
+	}
+
+	@PUT
+	@Path("/{professorId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Professor updateProfessor(@PathParam("professorId") String profId, 
+			Professor prof) {
+		return profService.updateProfessorInformation(profId, prof);
+	}
+
+}

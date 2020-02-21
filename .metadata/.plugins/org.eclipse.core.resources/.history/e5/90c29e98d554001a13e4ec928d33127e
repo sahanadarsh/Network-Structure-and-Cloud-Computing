@@ -1,0 +1,114 @@
+package com.csye6225.spring2020.courseservice.Resources;
+
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.csye6225.spring2020.courseservice.Service.LectureService;
+import com.csye6225.spring2020.courseservice.datamodel.Lecture;
+
+@Path("lectures")
+public class LectureResource {
+
+	LectureService lectureService = new LectureService();
+
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Lecture> getAllLectures() {
+		return lectureService.getAllLectures();
+	}	
+
+	@GET
+	@Path("/{lectureName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public static Lecture getLecture(@PathParam("lectureName") String lectureName) {
+		System.out.println("Lecture Resource: Looking for: " + lectureName);
+		if (lectureName == null) {
+			return null;
+		}
+		return LectureService.getLecture(lectureName);
+	}
+
+	@GET
+	@Path("{lectureName}/notes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getNotesByLecture(
+			@PathParam("lectureName") String lectureName) {		
+		if (lectureName == null) {
+			return null;
+		}
+		return lectureService.getNotesByLecture(lectureName);
+	}
+
+	@GET
+	@Path("{lectureName}/associatedMaterials")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getAssociatedMaterialByLecture(
+			@PathParam("lectureName") String lectureName) {		
+		if (lectureName == null) {
+			return null;
+		}
+		return lectureService.getAssociatedMaterialsByLecture(lectureName);
+	}
+
+	@GET
+	@Path("{lectureName}/notifications")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getNotificatonsByLecture(
+			@PathParam("lectureName") String lectureName) {		
+		if (lectureName == null) {
+			return null;
+		}
+		return lectureService.getNotificationsByLecture(lectureName);
+	}
+
+	@GET
+	@Path("{lectureName}/duration")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDurationByLecture(
+			@PathParam("lectureName") String lectureName) {		
+		if (lectureName == null) {
+			return null;
+		}
+		return lectureService.getDurationByLecture(lectureName);
+	}
+
+	@DELETE
+	@Path("/{lectureName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Lecture deleteLecture(@PathParam("lectureName") String lectureName) {
+		return lectureService.deleteLecture(lectureName);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Lecture addCourse(Lecture lecture) {
+		return lectureService.addLecture(lecture);
+	}
+
+	@PUT
+	@Path("/{lectureName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Lecture updateCourse(@PathParam("lectureName") String lectureName, 
+			Lecture lecture) {
+		if(lectureName == null) {
+			return null;
+		}
+		return lectureService.updateLectureInformattion(lectureName, lecture);
+	}
+
+}
+
+
+

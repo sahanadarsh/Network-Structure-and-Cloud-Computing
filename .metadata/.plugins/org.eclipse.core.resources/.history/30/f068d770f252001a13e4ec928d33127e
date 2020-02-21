@@ -1,0 +1,94 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Professor;
+
+//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+//import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+//import com.csye6225.fall2018.courseservice.datamodel.DynamoDbConnector;
+//import com.csye6225.fall2018.courseservice.datamodel.InMemoryDatabase;
+//import com.csye6225.fall2018.courseservice.datamodel.Professor;
+
+public class ProfessorService{
+
+	static HashMap<String, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
+
+	public ProfessorService(){
+	}
+
+	// Getting a list of all professor 
+	public List<Professor> getAllProfessors(){	
+		ArrayList<Professor> list = new ArrayList<>();
+		for (Professor prof : prof_Map.values()) {
+			list.add(prof);
+		}
+		return list ;
+	}
+
+	// Adding a professor
+	public void addProfessor(Professor professor){
+		boolean found = false;
+		for (Professor prof : prof_Map.values()) {
+			if((prof.getProfessorId()).equalsIgnoreCase(professor.getProfessorId())) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Professor prof = new Professor(professor.getProfessorId(), professor.getFirstName() , professor.getLastName(), 
+					professor.getDepartment(), professor.getJoiningDate(), professor.getCourses());
+			prof_Map.put(professor.getProfessorId(), prof);
+		}else {
+			System.out.println("Professor already exits");
+		}
+	}
+
+	// Getting One Professor
+	public Professor getProfessor(String profId) {
+		if(!prof_Map.containsKey(profId)) {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}else {
+		Professor prof2 = prof_Map.get(profId);
+		System.out.println("Item retrieved: ");
+		System.out.println(prof2.toString());
+		return prof2;
+		}
+	}
+
+	// Deleting a professor
+	public Professor deleteProfessor(String profId) {
+		if(prof_Map.containsKey(profId)) {
+			return prof_Map.remove(profId);
+		}else {
+			throw new NoSuchElementException ("Professor doesn't exits to delete");
+		}
+		
+	}
+
+	// Updating Professor Info
+	public Professor updateProfessorInformation(String profId, Professor prof) {	
+		prof.setProfessorId(prof.getFirstName()+ prof.getLastName());
+		prof_Map.put(profId, prof);
+		return prof;
+	}
+
+	// Get professors in a department 
+	public List<Professor> getProfessorsByDepartment(String department) {	
+		//Getting the list
+		ArrayList<Professor> list = new ArrayList<>();
+		for (Professor prof : prof_Map.values()) {
+			if (prof.getDepartment().equalsIgnoreCase(department)) {
+				list.add(prof);
+			}
+		}
+		return list ;
+	}
+
+	// Get professors for a year with a size limit
+
+}

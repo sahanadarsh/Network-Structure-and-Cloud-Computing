@@ -1,0 +1,160 @@
+package com.csye6225.spring2020.courseservice.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+import com.csye6225.spring2020.courseservice.datamodel.Program;
+import com.csye6225.spring2020.courseservice.exception.DataNotFoundException;
+
+public class ProgramService {
+
+	static HashMap<String, Program> program_Map = InMemoryDatabase.getProgramDB();
+
+	public ProgramService() {
+	}
+
+	//get all programs
+	public List<Program> getAllPrograms() {
+		ArrayList<Program> list = new ArrayList<>();
+		for (Program program : program_Map.values()) {
+			list.add(program);
+		}
+		if(list.isEmpty()) {
+			throw new DataNotFoundException("No programs in the system");
+		}
+		return list ;
+	}
+
+	// Adding a program
+	public Program addProgram(Program program){
+		program.setProgramName(program.getProgramName());
+		boolean found = false;
+		for (Program prog : program_Map.values()) {
+			if(prog.getProgramName().equalsIgnoreCase(program.getProgramName())) {
+				found = true;
+			}
+		}
+		if (!found) {
+			if(CourseService.doesCourseExit(program.getCourses()) && ProfessorService.doesProfessorsExit(program.getProfessors())) {
+				Program prog = new Program( program.getProgramName(), program.getCourses(), program.getProfessors(), program.getProgDuration(), program.getGraduationCredits());
+				program_Map.put(prog.getProgramName(), prog);
+				return prog;
+			}else {
+				throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("either courses or professors doesn't exit").build());
+			}
+		}else {
+			throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Program already exit").build());
+		}
+	}
+
+
+	// Getting One program
+	public static Program getProgram(String programName) {
+		if(program_Map.containsKey(programName)) {
+			Program program = program_Map.get(programName);
+			return program;
+		}else {
+			throw new DataNotFoundException("Program with name " + programName + " not found");
+		}
+	}
+
+	// Deleting a program
+	public Program deleteProgram(String programName) {
+		if(program_Map.containsKey(programName)) {
+			return program_Map.remove(programName);
+		}else {
+			throw new DataNotFoundException("Program with name " + programName + " not found");
+		}
+	}
+
+	// Updating program Info
+	public Program updateProgramInformattion(String programName, Program program) {
+		if(program_Map.containsKey(programName)) {
+			if(!program.getProgramName().equalsIgnoreCase(programName)) {
+				program_Map.remove(programName);
+			}
+			program_Map.put(program.getProgramName(), program);
+			return program;
+		}else {
+			throw new DataNotFoundException("Program with name " + programName + " not found");
+		}
+
+	}
+
+	// Get courses in a program 
+	public List<Course> getCoursesByProgram(String programName) {
+		if(program_Map.containsKey(programName)){
+			for (Program prog : program_Map.values()) {
+				if (prog.getProgramName().equalsIgnoreCase(programName)) {
+					List<String> courses = prog.getCourses();
+					List<Course> courseDetails = new ArrayList<>();
+					for(int i = 0; i < courses.size(); i++) {
+						courseDetails.add(CourseService.getCourse(courses.get(i)));
+					}
+					return courseDetails;
+				}
+			}
+		}else {
+			throw new DataNotFoundException("Didn't find courses for the program " + programName);
+		}
+		return null;
+	}
+
+	// Get professors in a program 
+	public List<Professor> getProfessorsByProgram(String programName) {	
+		if(program_Map.containsKey(programName)){
+			for (Program prog : program_Map.values()) {
+				if (prog.getProgramName().equalsIgnoreCase(programName)) {
+					List<String> professors = prog.getProfessors();
+					List<Professor> professorDetails = new ArrayList<>();
+					for(int i = 0; i < professors.size(); i++) {
+						professorDetails.add(ProfessorService.getProfessor(professors.get(i)));
+					}
+					return professorDetails;
+				}
+			}
+		}else {
+			throw new DataNotFoundException("Didn't find professors for the program " + programName);
+		}
+		return null;
+	}
+
+	//Get graduation credits by a program
+	public int getCreditsByProgram(String programName) {	
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getGraduationCredits();
+			}
+		}
+		throw new DataNotFoundException("Program doesn't exit");
+	}
+
+	//Get duration by a program 
+	public String getDurationByProgram(String programName) {
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getProgDuration();
+			}
+		}
+		throw new DataNotFoundException("Program doesn't exit");
+	}
+
+	public static boolean doesProgramExit(String programName) {
+		if(program_Map.containsKey(programName)) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+}
+
+
+
+

@@ -1,0 +1,138 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+
+public class ProfessorService{
+
+	static HashMap<String, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
+	CourseService courseService = new CourseService();
+
+	public ProfessorService(){
+	}
+
+	// Getting a list of all professor 
+	public List<Professor> getAllProfessors(){	
+		ArrayList<Professor> list = new ArrayList<>();
+		for (Professor prof : prof_Map.values()) {
+			list.add(prof);
+		}
+		return list ;
+	}
+
+	// Adding a professor
+	public void addProfessor(Professor professor){
+		boolean found = false;
+		for (Professor prof : prof_Map.values()) {
+			if((prof.getProfessorId()).equalsIgnoreCase(professor.getProfessorId())) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Professor prof = new Professor(professor.getFirstName() , professor.getLastName(), professor.getProfessorId(), professor.getDepartment(), professor.getJoiningDate(), professor.getCourses());
+			prof_Map.put(professor.getProfessorId(), prof);
+		}else {
+			System.out.println("Professor already exits");
+		}
+	}
+
+	// Getting One Professor
+	public Professor getProfessor(String profId) {
+		if(!prof_Map.containsKey(profId)) {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}else {
+			Professor prof2 = prof_Map.get(profId);
+			System.out.println("Item retrieved: ");
+			System.out.println(prof2.toString());
+			return prof2;
+		}
+	}
+
+	// Deleting a professor
+	public Professor deleteProfessor(String profId) {
+		if(prof_Map.containsKey(profId)) {
+			return prof_Map.remove(profId);
+		}else {
+			throw new NoSuchElementException ("Professor doesn't exits to delete");
+		}
+
+	}
+
+	// Updating Professor Info
+	public Professor updateProfessorInformation(String profId, Professor prof) {	
+		if(!prof_Map.containsKey(profId)) {
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}else {
+			prof.setProfessorId(prof.getFirstName()+ prof.getLastName());
+			prof_Map.put(profId, prof);
+			return prof;
+		}
+	}
+
+	// Get professors in a department 
+	public List<Professor> getProfessorsByDepartment(String department) {	
+		ArrayList<Professor> list = new ArrayList<>();
+		boolean invalid = true;
+		for (Professor prof : prof_Map.values()) {
+			if (prof.getDepartment().equalsIgnoreCase(department)) {
+				invalid = false;
+				list.add(prof);
+			}
+		}
+		if(!invalid) {
+			return list ;
+		}else {
+			throw new NoSuchElementException ("Professor with the mentioned department doesn't exits");
+		}
+	}
+
+	// Get professors by joining date
+	public List<Professor> getProfessorsByJoiningDate(String joingingDate) {	
+		ArrayList<Professor> list = new ArrayList<>();
+		boolean invalid = true;
+		for (Professor prof : prof_Map.values()) {
+			if (prof.getJoiningDate().equalsIgnoreCase(joingingDate)) {
+				invalid = false;
+				list.add(prof);
+			}
+		}
+		if(!invalid) {
+			return list ;
+		}else {
+			throw new NoSuchElementException ("Professor with the mentioned joining date doesn't exits");
+		}
+	}
+
+	//Get courses associated with a particular professor
+	public List<Course> getCoursesByProfessor(String profId) {
+		if(prof_Map.containsKey(profId)){
+			for (Professor prof : prof_Map.values()) {
+				if (prof.getProfessorId().equalsIgnoreCase(profId)) {
+					List<String> courses = prof.getCourses();
+					List<Course> courseDetails = new ArrayList<>();
+					for(int i = 0; i < courses.size(); i++) {
+						courseDetails.add(courseService.getCourse(courses.get(i)));
+					}
+					return courseDetails;
+				}
+			}
+			throw new NoSuchElementException ("Professor doesn't exits");
+		}
+		return null;
+	}
+	
+	public boolean isProfessorExit(String professorId) {
+		if(prof_Map.containsKey(professorId)) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+}

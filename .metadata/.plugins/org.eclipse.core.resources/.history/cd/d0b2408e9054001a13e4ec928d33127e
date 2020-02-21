@@ -1,0 +1,162 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Program;
+import com.csye6225.spring2020.courseservice.datamodel.Student;
+import com.csye6225.spring2020.courseservice.exception.DataNotFoundException;
+
+public class StudentService {
+
+	static HashMap<String, Student> student_Map = InMemoryDatabase.getStudentDB();
+
+	public StudentService() {
+	}
+
+	//get all students
+	public List<Student> getAllStudents() {
+		ArrayList<Student> list = new ArrayList<>();
+		for (Student student : student_Map.values()) {
+			list.add(student);
+		}
+		if(list.isEmpty()) {
+			throw new DataNotFoundException("No students in the system");
+		}
+		return list ;
+	}
+
+	// Adding a student
+	public Student addStudent(Student student) {
+		student.setStudentId(student.getFirstName()+student.getLastName());
+		boolean found = false;
+		for (Student stud : student_Map.values()) {
+			if((stud.getStudentId()).equalsIgnoreCase(student.getStudentId())) {
+				found = true;
+			}
+		}
+		if (!found) {
+			if(CourseService.doesCourseExit(student.getEnrolledCourses()) && ProgramService.doesProgramExit(student.getProgram())) {
+				Student stud = new Student(student.getStudentId(), student.getFirstName() , student.getLastName(), student.getImage(), 
+						student.getProgram(), student.getEnrolledCourses());
+				student_Map.put(student.getStudentId(), stud);
+				return stud;
+			}else {
+				throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("either Course or program doesn't exit").build());
+			}
+		}else {
+			throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Student already exit").build());
+		}
+	}
+
+
+	// Getting One student
+	public static Student getStudent(String studentId) {
+		if(student_Map.containsKey(studentId)) {
+			Student student = student_Map.get(studentId);
+			return student;
+		}else {
+			throw new DataNotFoundException("Student with Id " + studentId + " not found");
+		}
+	}
+
+	// Deleting a student
+	public Student deleteStudent(String studentId) {
+		if(student_Map.containsKey(studentId)) {
+			return student_Map.remove(studentId);
+		}else {
+			throw new DataNotFoundException("Student with Id " + studentId + " not found");
+		}
+	}
+
+	//Updating student Info
+	public Student updateStudentInformation(String studentId, Student student) {
+		if(student_Map.containsKey(studentId)) {
+			student.setStudentId(student.getFirstName() + student.getLastName());
+			student_Map.put(studentId, student);
+			return student;
+		}else {
+			throw new DataNotFoundException("Student with Id " + studentId + " not found");
+		}
+	}
+
+	// Get students by a program 
+	public List<Student> getStudentsByProgram(String program) {	
+		ArrayList<Student> list = new ArrayList<>();
+		boolean invalid = true;
+		for (Student stud : student_Map.values()) {
+			if (stud.getProgram().equalsIgnoreCase(program)) {
+				invalid = false;
+				list.add(stud);
+			}
+		}
+		if(!invalid) {
+			return list ;
+		}else {
+			throw new DataNotFoundException("Student with program " + program + " not found");
+		}
+
+	}
+
+	// Get enrolled courses by a student
+	public List<Course> getEnrolledCoursesByStudent(String studentId) {
+		//if(student_Map.containsKey(studentId)) {
+		for (Student stud : student_Map.values()) {
+			if (stud.getStudentId().equalsIgnoreCase(studentId)) {
+				List<String> courses = stud.getEnrolledCourses();
+				List<Course> courseDetails = new ArrayList<>();
+				for(int i = 0; i < courses.size(); i++) {
+					courseDetails.add(CourseService.getCourse(courses.get(i)));
+				}
+				return courseDetails;
+			}
+		}			
+		//}else {
+		//throw new NoSuchElementException("Student doesn't exit");
+		//}
+		return null;
+	}
+
+	// Get program by a student
+	public Program getProgramByStudent(String studentId) {
+		if(student_Map.containsKey(studentId)) {
+			for (Student stud : student_Map.values()) {
+				if (stud.getStudentId().equalsIgnoreCase(studentId)) {
+					String program = stud.getProgram();
+					return ProgramService.getProgram(program);	
+				}
+			}
+		}else {
+			throw new NoSuchElementException("Student doesn't exit");
+		}
+		return null;
+	}
+
+	public static boolean isStudentsExit(List<String> students){
+		for(int i = 0; i < students.size(); i++) {
+			if(!student_Map.containsKey(students.get(i))){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isStudentExit(String studentId){
+		if(!student_Map.containsKey(studentId)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+}
+
+
+

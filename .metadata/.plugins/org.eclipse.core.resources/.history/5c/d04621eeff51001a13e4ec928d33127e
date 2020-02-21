@@ -1,0 +1,89 @@
+package com.csye6225.spring2020.courseservice.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.csye6225.spring2020.courseservice.DataBase.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.Model.Course;
+
+public class CourseService {
+
+	static HashMap<String, Course> course_Map = InMemoryDatabase.getCourseDB();
+
+	public CourseService() {
+	}
+
+	public List<Course> getAllCourses() {
+		ArrayList<Course> list = new ArrayList<>();
+		for (Course course : course_Map.values()) {
+			list.add(course);
+		}
+		return list ;
+	}
+
+	// Adding a program
+	public void addProgram(String programName, List<String> courses, List<String> professors, int progDuration, int graduationCredits) {
+		boolean found = false;
+		//Create a student Object
+		for (Program prog : program_Map.values()) {
+			if(prog.getProgramName() == programName) {
+				found = true;
+			}
+		}
+		if (!found) {
+			Program prog = new Program( programName, courses, professors, progDuration, graduationCredits);
+			program_Map.put(programName, prog);
+		}else {
+			System.out.println("Program already exits");
+		}
+	}
+
+
+	// Getting One program
+	public Program getProgram(String programName) {
+
+		//Simple HashKey Load
+		Program program = program_Map.get(programName);
+		System.out.println("Item retrieved:");
+		System.out.println(program.toString());
+
+		return program;
+	}
+
+	// Deleting a program
+	public Program deleteProgram(String programName) {
+		return program_Map.remove(programName);
+	}
+
+	// Updating student Info
+	public Program updateProgramInformattion(String programName, Program program) {
+		program.setProgramName(program.getProgramName());
+		program_Map.put(programName, program);
+		return program;
+	}
+
+	// Get courses in a program 
+	public List<String> getCoursesByProgram(String programName) {	
+		//Getting the courses list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getCourses();
+			}
+		}
+		return null;
+	}
+	
+	// Get professors in a program 
+	public List<String> getProfessorsByProgram(String programName) {	
+		//Getting the professors list
+		for (Program prog : program_Map.values()) {
+			if (prog.getProgramName().equalsIgnoreCase(programName)) {
+				return prog.getProfessors();
+			}
+		}
+		return null;
+	}
+
+}
+

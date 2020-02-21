@@ -1,0 +1,18 @@
+package com.csye6225.spring2020.courseservice.Model;
+
+import java.util.Date;
+import java.util.List;
+
+public class Student {
+
+	private String firstName;
+	private String lastName;
+	private String studentId;
+	private String image;
+	private List<String> enrolledCourses;
+	private String programName;
+
+	public Student() {
+
+	}
+}
